@@ -41,11 +41,15 @@ var uploadRequest = function (path, args, accessToken, selectUser) {
       }
     }
 
-    apiRequest = request.post(BASE_URL + path)
-      .type('application/octet-stream')
+    request.parse['application/octet-stream'] = function(obj) {
+      return obj;
+    }
+    apiRequest = request.get(BASE_URL + path)
       .set('Authorization', 'Bearer ' + accessToken)
-      .set('Dropbox-API-Arg', JSON.stringify(args));
-
+      .set('Dropbox-API-Arg', JSON.stringify(args))
+      .on('request', function () {
+        this.xhr.responseType = 'blob'; // or blob
+      });
     if (selectUser) {
       apiRequest = apiRequest.set('Dropbox-API-Select-User', selectUser);
     }

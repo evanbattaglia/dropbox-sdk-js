@@ -94,7 +94,7 @@ DropboxBase.prototype.request = function (path, args, host, style) {
   if (style === REQUEST_CONSTANTS.RPC) {
     return this.rpcRequest(path, args, this.getAccessToken(), this.selectUser);
   } else if (style === REQUEST_CONSTANTS.DOWNLOAD) {
-    throw new Error('Download endpoints are not yet implemented');
+    return this.uploadRequest(path, args, this.getAccessToken(), this.selectUser);
   } else if (style === REQUEST_CONSTANTS.UPLOAD) {
     return this.uploadRequest(path, args, this.getAccessToken(), this.selectUser);
   } else {
