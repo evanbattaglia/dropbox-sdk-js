@@ -70,7 +70,7 @@ downloadRequest = function (path, args, auth, host, accessToken, selectUser) {
       .set('Authorization', 'Bearer ' + accessToken)
       .set('Dropbox-API-Arg', JSON.stringify(args))
       .on('request', function () {
-        if (this.xhr) {
+        if (this.xhr && navigator.product !== 'ReactNative') {
           this.xhr.responseType = 'blob';
         }
       });
