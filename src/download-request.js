@@ -6,6 +6,8 @@ var buildCustomError;
 var downloadRequest;
 var nodeBinaryParser;
 
+var isReactNative = (navigator.product == 'ReactNative');
+
 // Register a handler that will instruct superagent how to parse the response
 request.parse['application/octect-stream'] = function (obj) {
   return obj;
@@ -57,7 +59,9 @@ downloadRequest = function (path, args, auth, host, accessToken, selectUser) {
         // In the browser, the file is passed as a blob and in node the file is
         // passed as a string of binary data.
         data = JSON.parse(response.headers['dropbox-api-result']);
-        if (response.xhr) {
+        if (isReactNative) {
+          data.fileArrayBuffer = response.xhr.response;
+        } else if (response.xhr) {
           data.fileBlob = response.xhr.response;
         } else {
           data.fileBinary = response.res.text;
@@ -70,7 +74,9 @@ downloadRequest = function (path, args, auth, host, accessToken, selectUser) {
       .set('Authorization', 'Bearer ' + accessToken)
       .set('Dropbox-API-Arg', JSON.stringify(args))
       .on('request', function () {
-        if (this.xhr && navigator.product !== 'ReactNative') {
+        if (isReactNative) {
+          this.xhr.responseType = 'arraybuffer';
+        } else if (this.xhr) {
           this.xhr.responseType = 'blob';
         }
       });
